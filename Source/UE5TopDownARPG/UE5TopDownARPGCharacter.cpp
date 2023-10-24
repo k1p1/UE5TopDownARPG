@@ -10,6 +10,8 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Materials/Material.h"
 #include "Engine/World.h"
+#include "UE5TopDownARPGGameMode.h"
+#include "UE5TopDownARPG.h"
 
 AUE5TopDownARPGCharacter::AUE5TopDownARPGCharacter()
 {
@@ -43,9 +45,30 @@ AUE5TopDownARPGCharacter::AUE5TopDownARPGCharacter()
 	// Activate ticking in order to update the cursor every frame.
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
+
+	OnTakeAnyDamage.AddDynamic(this, &AUE5TopDownARPGCharacter::TakeAnyDamage);
 }
 
 void AUE5TopDownARPGCharacter::Tick(float DeltaSeconds)
 {
     Super::Tick(DeltaSeconds);
+}
+
+void AUE5TopDownARPGCharacter::TakeAnyDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigateBy, AActor* DamageCauser)
+{
+	Health -= Damage;
+	if (Health <= 0.0f)
+	{
+		Death();
+	}
+}
+
+void AUE5TopDownARPGCharacter::Death()
+{
+	UE_LOG(LogUE5TopDownARPG, Log, TEXT("Character Death"));
+	AUE5TopDownARPGGameMode* GameMode = Cast<AUE5TopDownARPGGameMode>(GetWorld()->GetAuthGameMode());
+	if (IsValid(GameMode))
+	{
+		GameMode->EndGame(false);
+	}
 }
