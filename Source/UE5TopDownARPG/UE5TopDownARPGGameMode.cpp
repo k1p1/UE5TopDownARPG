@@ -4,6 +4,7 @@
 #include "UE5TopDownARPGPlayerController.h"
 #include "UE5TopDownARPGCharacter.h"
 #include "UObject/ConstructorHelpers.h"
+#include "UE5TopDownARPG.h"
 
 AUE5TopDownARPGGameMode::AUE5TopDownARPGGameMode()
 {
@@ -22,5 +23,17 @@ AUE5TopDownARPGGameMode::AUE5TopDownARPGGameMode()
 	if(PlayerControllerBPClass.Class != NULL)
 	{
 		PlayerControllerClass = PlayerControllerBPClass.Class;
+	}
+}
+
+void AUE5TopDownARPGGameMode::EndGame(bool IsWin)
+{
+	if (IsWin)
+	{
+		UE_LOG(LogUE5TopDownARPG, Log, TEXT("Win"));
+	}
+	else
+	{
+		UE_LOG(LogUE5TopDownARPG, Log, TEXT("Lose"));
 	}
 }
