@@ -1,5 +1,5 @@
 # UE5TopDownARPG
-Template for a Top Down ARPG created with Unreal Engine 4.
+Template for a Top Down ARPG created with Unreal Engine 5.
 
 Part of the learning materials for the course 'Game Engine Architecture with UE4' taught at the University of Sofia.
 
