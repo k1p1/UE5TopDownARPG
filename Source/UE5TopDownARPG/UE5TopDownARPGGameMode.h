@@ -13,6 +13,8 @@ class AUE5TopDownARPGGameMode : public AGameModeBase
 
 public:
 	AUE5TopDownARPGGameMode();
+
+	void EndGame(bool IsWin);
 };
 
 
