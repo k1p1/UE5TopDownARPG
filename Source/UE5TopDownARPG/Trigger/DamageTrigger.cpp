@@ -6,5 +6,5 @@
 
 void ADamageTrigger::Action(AActor* ActorInRange)
 {
-  ActorInRange->TakeDamage(1.0f, FDamageEvent(UDamageType::StaticClass()), nullptr, this);
+  ActorInRange->TakeDamage(Damage, FDamageEvent(UDamageType::StaticClass()), nullptr, this);
 }

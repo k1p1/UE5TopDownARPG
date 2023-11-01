@@ -31,8 +31,16 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditDefaultsOnly)
 	float Health;
+
+	FTimerHandle DeathTimerHandle;
+
+	UPROPERTY(EditDefaultsOnly)
+	float DeathTimerRate = 1.0f;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class AActor> AfterDeathSpawnActorClass;
 
 	UFUNCTION()
 	void TakeAnyDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigateBy, AActor* DamageCauser);

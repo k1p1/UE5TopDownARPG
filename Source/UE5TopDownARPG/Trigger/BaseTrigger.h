@@ -21,11 +21,16 @@ protected:
 
 	virtual void Action(AActor* ActorInRange);
 
+	void CustomTick();
+
 	UPROPERTY()
 	AActor* Target;
 
-	UPROPERTY(EditAnywhere)
-	float Range;
+	UPROPERTY(EditDefaultsOnly)
+	float Range = 100.0f;
+
+	UPROPERTY(EditDefaultsOnly)
+	float CustomTickRate = 1.0f;
 
 public:	
 	// Called every frame
