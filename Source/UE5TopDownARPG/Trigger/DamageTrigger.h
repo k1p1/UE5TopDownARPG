@@ -16,5 +16,8 @@ class UE5TOPDOWNARPG_API ADamageTrigger : public ABaseTrigger
 
 protected:
 	virtual void Action(AActor* ActorInRange) override;
+
+	UPROPERTY(EditDefaultsOnly)
+	float Damage = 10.0f;
 	
 };

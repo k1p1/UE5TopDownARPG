@@ -11,6 +11,7 @@
 #include "Materials/Material.h"
 #include "Engine/World.h"
 #include "UE5TopDownARPGGameMode.h"
+#include "UE5TopDownARPG.h"
 
 AUE5TopDownARPGCharacter::AUE5TopDownARPGCharacter()
 {
@@ -56,17 +57,33 @@ void AUE5TopDownARPGCharacter::Tick(float DeltaSeconds)
 void AUE5TopDownARPGCharacter::TakeAnyDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigateBy, AActor* DamageCauser)
 {
 	Health -= Damage;
+	UE_LOG(LogUE5TopDownARPG, Log, TEXT("Health %f"), Health);
 	if (Health <= 0.0f)
 	{
-		Death();
+		FTimerHandle DeathHandle;
+		GetWorld()->GetTimerManager().SetTimer(DeathHandle, this, &AUE5TopDownARPGCharacter::Death, DeathDelay);
 	}
 }
 
 void AUE5TopDownARPGCharacter::Death()
 {
+	UE_LOG(LogUE5TopDownARPG, Log, TEXT("Death"));
 	AUE5TopDownARPGGameMode* GameMode = Cast<AUE5TopDownARPGGameMode>(GetWorld()->GetAuthGameMode());
 	if (IsValid(GameMode))
 	{
 		GameMode->EndGame(false);
 	}
+
+	FActorSpawnParameters SpawnParameters;
+	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+	FVector Location = GetActorLocation();
+	FRotator Rotation = GetActorRotation();
+	AActor* SpawnedActor = GetWorld()->SpawnActor(AfterDeathSpawnClass, &Location, &Rotation, SpawnParameters);
+	if (IsValid(SpawnedActor))
+	{
+
+	}
+
+	Destroy();
 }
