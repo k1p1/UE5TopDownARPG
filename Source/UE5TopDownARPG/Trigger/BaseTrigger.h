@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Components/SphereComponent.h"
 #include "BaseTrigger.generated.h"
 
 UCLASS()
@@ -19,18 +20,19 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	virtual void Action(AActor* ActorInRange);
+	virtual void ActionStart(AActor* ActorInRange);
+	virtual void ActionEnd(AActor* ActorInRange);
 
-	void CustomTick();
+	UFUNCTION()
+	void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* Other, UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-	UPROPERTY()
-	AActor* Target;
+	UFUNCTION()
+	void OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* Other, UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex);
 
 	UPROPERTY(EditDefaultsOnly)
-	float Range;
-
-	UPROPERTY(EditDefaultsOnly)
-	float CustomTickRate = 1.0f;
+	USphereComponent* SphereComponent;
 
 public:	
 	// Called every frame

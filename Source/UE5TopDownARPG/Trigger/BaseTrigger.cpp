@@ -11,6 +11,12 @@ ABaseTrigger::ABaseTrigger()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("SphereCollisionComponent"));
+	SphereComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
+	SphereComponent->SetupAttachment(RootComponent);
+
+	SphereComponent->OnComponentBeginOverlap.AddUniqueDynamic(this, &ABaseTrigger::OnOverlapBegin);
+	SphereComponent->OnComponentEndOverlap.AddUniqueDynamic(this, &ABaseTrigger::OnOverlapEnd);
 }
 
 // Called when the game starts or when spawned
@@ -18,32 +24,26 @@ void ABaseTrigger::BeginPlay()
 {
 	Super::BeginPlay();
 
-	TArray<AActor*> Actors;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AUE5TopDownARPGCharacter::StaticClass(), Actors);
-	if (Actors.Num() > 0)
-	{
-		Target = Actors[0];
-	}
-
-	FTimerHandle CustomTickTimerHandle;
-
-	GetWorld()->GetTimerManager().SetTimer(CustomTickTimerHandle, this, &ABaseTrigger::CustomTick, CustomTickRate, true);
 }
 
-void ABaseTrigger::Action(AActor* ActorInRange)
+void ABaseTrigger::ActionStart(AActor* ActorInRange)
 {
 
 }
 
-void ABaseTrigger::CustomTick()
+void ABaseTrigger::ActionEnd(AActor* ActorInRange)
 {
-	if (IsValid(Target))
-	{
-		if ((GetActorLocation() - Target->GetActorLocation()).Length() < Range)
-		{
-			Action(Target);
-		}
-	}
+
+}
+
+void ABaseTrigger::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* Other, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	ActionStart(Other);
+}
+
+void ABaseTrigger::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* Other, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	ActionEnd(Other);
 }
 
 // Called every frame

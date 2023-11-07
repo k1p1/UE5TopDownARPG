@@ -4,7 +4,22 @@
 #include "DamageTrigger.h"
 #include "Engine/DamageEvents.h"
 
-void ADamageTrigger::Action(AActor* ActorInRange)
+void ADamageTrigger::ActionStart(AActor* ActorInRange)
 {
-  ActorInRange->TakeDamage(Damage, FDamageEvent(UDamageType::StaticClass()), nullptr, this);
+  Target = ActorInRange;
+  GetWorld()->GetTimerManager().SetTimer(DamageTimerHandle, this, &ADamageTrigger::DamageTick, DamageTickRate, true);
+}
+
+void ADamageTrigger::ActionEnd(AActor* ActorInRange)
+{
+  Target = nullptr;
+  GetWorld()->GetTimerManager().ClearTimer(DamageTimerHandle);
+}
+
+void ADamageTrigger::DamageTick()
+{
+  if (IsValid(Target))
+  {
+    Target->TakeDamage(Damage, FDamageEvent(UDamageType::StaticClass()), nullptr, this);
+  }
 }
