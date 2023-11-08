@@ -52,6 +52,16 @@ AUE5TopDownARPGCharacter::AUE5TopDownARPGCharacter()
 void AUE5TopDownARPGCharacter::Tick(float DeltaSeconds)
 {
     Super::Tick(DeltaSeconds);
+
+		FHitResult HitResult;
+		FVector TraceStartLocation = GetActorLocation();
+		FVector TraceEndLocation = GetActorLocation() + GetActorForwardVector() * 300.0f;
+		FCollisionQueryParams Params;
+		Params.AddIgnoredActor(this);
+		if (GetWorld()->LineTraceSingleByChannel(HitResult, TraceStartLocation, TraceEndLocation, ECollisionChannel::ECC_WorldDynamic, Params))
+		{
+			UE_LOG(LogUE5TopDownARPG, Log, TEXT("TraceHit Actor:%s, Component:%s"), *HitResult.GetActor()->GetName(), *HitResult.GetComponent()->GetName());
+		}
 }
 
 void AUE5TopDownARPGCharacter::TakeAnyDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigateBy, AActor* DamageCauser)
