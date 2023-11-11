@@ -37,6 +37,8 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	float DeathDelay = 1.0f;
 
+	FTimerHandle DeathHandle;
+
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AActor> AfterDeathSpawnClass;
 

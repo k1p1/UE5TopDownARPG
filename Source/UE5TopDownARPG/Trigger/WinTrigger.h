@@ -15,6 +15,6 @@ class UE5TOPDOWNARPG_API AWinTrigger : public ABaseTrigger
 	GENERATED_BODY()
 
 protected:
-	virtual void Action(AActor* ActorInRange) override;
+	virtual void ActionStart(AActor* ActorInRange) override;
 	
 };

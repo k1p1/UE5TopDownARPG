@@ -3,6 +3,7 @@
 
 #include "BaseTrigger.h"
 #include "Kismet/GameplayStatics.h"
+#include "../UE5TopDownARPG.h"
 #include "../UE5TopDownARPGCharacter.h"
 
 // Sets default values
@@ -11,39 +12,40 @@ ABaseTrigger::ABaseTrigger()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("CollisionSphereComponent"));
+	SphereComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
+	SphereComponent->SetupAttachment(RootComponent);
+
+	SphereComponent->OnComponentBeginOverlap.AddUniqueDynamic(this, &ABaseTrigger::OnBeginOverlap);
+	SphereComponent->OnComponentEndOverlap.AddUniqueDynamic(this, &ABaseTrigger::OnEndOverlap);
 }
 
 // Called when the game starts or when spawned
 void ABaseTrigger::BeginPlay()
 {
 	Super::BeginPlay();
-
-	TArray<AActor*> Actors;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AUE5TopDownARPGCharacter::StaticClass(), Actors);
-	if (Actors.Num() > 0)
-	{
-		Target = Actors[0];
-	}
-
-	FTimerHandle CustomTickTimerHandle;
-
-	GetWorld()->GetTimerManager().SetTimer(CustomTickTimerHandle, this, &ABaseTrigger::CustomTick, CustomTickRate, true);
 }
 
-void ABaseTrigger::Action(AActor* ActorInRange)
+void ABaseTrigger::ActionStart(AActor* ActorInRange)
 {
 
 }
 
-void ABaseTrigger::CustomTick()
+void ABaseTrigger::ActionEnd(AActor* ActorInRange)
 {
-	if (IsValid(Target))
-	{
-		if ((GetActorLocation() - Target->GetActorLocation()).Length() < Range)
-		{
-			Action(Target);
-		}
-	}
+
+}
+
+void ABaseTrigger::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Other, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	UE_LOG(LogUE5TopDownARPG, Log, TEXT("OverlapBegin %s %s"), *Other->GetName(), *OtherComp->GetName());
+	ActionStart(Other);
+}
+
+void ABaseTrigger::OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Other, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	UE_LOG(LogUE5TopDownARPG, Log, TEXT("OverlapEnd %s %s"), *Other->GetName(), *OtherComp->GetName());
+	ActionEnd(Other);
 }
 
 // Called every frame
