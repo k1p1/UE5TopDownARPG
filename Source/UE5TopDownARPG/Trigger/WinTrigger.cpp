@@ -4,7 +4,7 @@
 #include "WinTrigger.h"
 #include "../UE5TopDownARPGGameMode.h"
 
-void AWinTrigger::Action(AActor* ActorInRange)
+void AWinTrigger::ActionStart(AActor* ActorInRange)
 {
   AUE5TopDownARPGGameMode* GameMode = Cast<AUE5TopDownARPGGameMode>(GetWorld()->GetAuthGameMode());
   if (IsValid(GameMode))

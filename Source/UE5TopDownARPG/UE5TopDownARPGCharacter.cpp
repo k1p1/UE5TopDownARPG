@@ -52,6 +52,17 @@ AUE5TopDownARPGCharacter::AUE5TopDownARPGCharacter()
 void AUE5TopDownARPGCharacter::Tick(float DeltaSeconds)
 {
     Super::Tick(DeltaSeconds);
+
+		FHitResult HitResult;
+		FVector TraceStartLocation = GetActorLocation();
+		FVector TraceEndLocation = GetActorLocation() + GetActorForwardVector() * 300.0f;
+		FCollisionQueryParams Params;
+		Params.AddIgnoredActor(this);
+
+		if (GetWorld()->LineTraceSingleByChannel(HitResult, TraceStartLocation, TraceEndLocation, ECollisionChannel::ECC_WorldDynamic, Params))
+		{
+			UE_LOG(LogUE5TopDownARPG, Log, TEXT("TraceHit %s %s"), *HitResult.GetActor()->GetName(), *HitResult.GetComponent()->GetName());
+		}
 }
 
 void AUE5TopDownARPGCharacter::TakeAnyDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigateBy, AActor* DamageCauser)
@@ -60,7 +71,6 @@ void AUE5TopDownARPGCharacter::TakeAnyDamage(AActor* DamagedActor, float Damage,
 	UE_LOG(LogUE5TopDownARPG, Log, TEXT("Health %f"), Health);
 	if (Health <= 0.0f)
 	{
-		FTimerHandle DeathHandle;
 		GetWorld()->GetTimerManager().SetTimer(DeathHandle, this, &AUE5TopDownARPGCharacter::Death, DeathDelay);
 	}
 }
@@ -85,5 +95,6 @@ void AUE5TopDownARPGCharacter::Death()
 
 	}
 
+	GetWorld()->GetTimerManager().ClearTimer(DeathHandle);
 	Destroy();
 }
