@@ -10,6 +10,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Materials/Material.h"
 #include "Engine/World.h"
+#include "Abilities/BaseAbility.h"
 #include "UE5TopDownARPGGameMode.h"
 #include "UE5TopDownARPG.h"
 
@@ -49,6 +50,13 @@ AUE5TopDownARPGCharacter::AUE5TopDownARPGCharacter()
 	OnTakeAnyDamage.AddDynamic(this, &AUE5TopDownARPGCharacter::TakeAnyDamage);
 }
 
+void AUE5TopDownARPGCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	AbilityInstance = NewObject<UBaseAbility>(this, AbilityTemplate);
+}
+
 void AUE5TopDownARPGCharacter::Tick(float DeltaSeconds)
 {
     Super::Tick(DeltaSeconds);
@@ -63,6 +71,16 @@ void AUE5TopDownARPGCharacter::Tick(float DeltaSeconds)
 		{
 			UE_LOG(LogUE5TopDownARPG, Log, TEXT("TraceHit %s %s"), *HitResult.GetActor()->GetName(), *HitResult.GetComponent()->GetName());
 		}
+}
+
+bool AUE5TopDownARPGCharacter::ActivateAbility(FVector Location)
+{
+	if (IsValid(AbilityInstance) == false)
+	{
+		return false;
+	}
+
+	return AbilityInstance->Activate(Location);
 }
 
 void AUE5TopDownARPGCharacter::TakeAnyDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigateBy, AActor* DamageCauser)

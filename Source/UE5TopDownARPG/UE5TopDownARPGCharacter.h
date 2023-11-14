@@ -14,6 +14,8 @@ class AUE5TopDownARPGCharacter : public ACharacter
 public:
 	AUE5TopDownARPGCharacter();
 
+	virtual void BeginPlay() override;
+
 	// Called every frame.
 	virtual void Tick(float DeltaSeconds) override;
 
@@ -21,6 +23,8 @@ public:
 	FORCEINLINE class UCameraComponent* GetTopDownCameraComponent() const { return TopDownCameraComponent; }
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
+
+	bool ActivateAbility(FVector Location);
 
 private:
 	/** Top down camera */
@@ -33,6 +37,12 @@ private:
 
 	UPROPERTY(EditDefaultsOnly)
 	float Health = 100.0f;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class UBaseAbility> AbilityTemplate;
+
+	UPROPERTY()
+	class UBaseAbility* AbilityInstance;
 
 	UPROPERTY(EditDefaultsOnly)
 	float DeathDelay = 1.0f;

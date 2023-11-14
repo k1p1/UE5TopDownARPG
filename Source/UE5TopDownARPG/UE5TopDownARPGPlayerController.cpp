@@ -44,6 +44,8 @@ void AUE5TopDownARPGPlayerController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(SetDestinationClickAction, ETriggerEvent::Completed, this, &AUE5TopDownARPGPlayerController::OnSetDestinationReleased);
 		EnhancedInputComponent->BindAction(SetDestinationClickAction, ETriggerEvent::Canceled, this, &AUE5TopDownARPGPlayerController::OnSetDestinationReleased);
 
+		EnhancedInputComponent->BindAction(ActivateAbilityAction, ETriggerEvent::Started, this, &AUE5TopDownARPGPlayerController::OnActivateAbilityTriggered);
+
 		// Setup touch input events
 		EnhancedInputComponent->BindAction(SetDestinationTouchAction, ETriggerEvent::Started, this, &AUE5TopDownARPGPlayerController::OnInputStarted);
 		EnhancedInputComponent->BindAction(SetDestinationTouchAction, ETriggerEvent::Triggered, this, &AUE5TopDownARPGPlayerController::OnTouchTriggered);
@@ -114,4 +116,27 @@ void AUE5TopDownARPGPlayerController::OnTouchReleased()
 {
 	bIsTouch = false;
 	OnSetDestinationReleased();
+}
+
+void AUE5TopDownARPGPlayerController::OnActivateAbilityTriggered()
+{
+	FHitResult Hit;
+	bool bHitSuccessful = false;
+	if (bIsTouch)
+	{
+		bHitSuccessful = GetHitResultUnderFinger(ETouchIndex::Touch1, ECollisionChannel::ECC_Visibility, true, Hit);
+	}
+	else
+	{
+		bHitSuccessful = GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, true, Hit);
+	}
+
+	if (bHitSuccessful)
+	{
+		AUE5TopDownARPGCharacter* UE5TopDownARPGCharacter = Cast<AUE5TopDownARPGCharacter>(GetPawn());
+		if (IsValid(UE5TopDownARPGCharacter))
+		{
+			UE5TopDownARPGCharacter->ActivateAbility(Hit.Location);
+		}
+	}
 }
