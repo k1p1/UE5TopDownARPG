@@ -9,6 +9,7 @@
 #include "Engine/World.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "UE5TopDownARPG.h"
 
 AUE5TopDownARPGPlayerController::AUE5TopDownARPGPlayerController()
 {
@@ -43,6 +44,8 @@ void AUE5TopDownARPGPlayerController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(SetDestinationClickAction, ETriggerEvent::Triggered, this, &AUE5TopDownARPGPlayerController::OnSetDestinationTriggered);
 		EnhancedInputComponent->BindAction(SetDestinationClickAction, ETriggerEvent::Completed, this, &AUE5TopDownARPGPlayerController::OnSetDestinationReleased);
 		EnhancedInputComponent->BindAction(SetDestinationClickAction, ETriggerEvent::Canceled, this, &AUE5TopDownARPGPlayerController::OnSetDestinationReleased);
+
+		EnhancedInputComponent->BindAction(ActivateAbilityAction, ETriggerEvent::Started, this, &AUE5TopDownARPGPlayerController::OnActivateAbilityStarted);
 
 		// Setup touch input events
 		EnhancedInputComponent->BindAction(SetDestinationTouchAction, ETriggerEvent::Started, this, &AUE5TopDownARPGPlayerController::OnInputStarted);
@@ -114,4 +117,30 @@ void AUE5TopDownARPGPlayerController::OnTouchReleased()
 {
 	bIsTouch = false;
 	OnSetDestinationReleased();
+}
+
+void AUE5TopDownARPGPlayerController::OnActivateAbilityStarted()
+{
+	UE_LOG(LogUE5TopDownARPG, Log, TEXT("OnActivateAbilityStarted"));
+
+	AUE5TopDownARPGCharacter* ARPGCharacter = Cast<AUE5TopDownARPGCharacter>(GetPawn());
+	if (IsValid(ARPGCharacter))
+	{
+		FHitResult Hit;
+		bool bHitSuccessful = false;
+		if (bIsTouch)
+		{
+			bHitSuccessful = GetHitResultUnderFinger(ETouchIndex::Touch1, ECollisionChannel::ECC_Visibility, true, Hit);
+		}
+		else
+		{
+			bHitSuccessful = GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, true, Hit);
+		}
+
+		// If we hit a surface, cache the location
+		if (bHitSuccessful)
+		{
+			ARPGCharacter->ActivateAbility(Hit.Location);
+		}
+	}
 }
