@@ -3,8 +3,8 @@
 
 #include "BaseTrigger.h"
 #include "Kismet/GameplayStatics.h"
+#include "Components/SphereComponent.h"
 #include "../UE5TopDownARPG.h"
-#include "../UE5TopDownARPGCharacter.h"
 
 // Sets default values
 ABaseTrigger::ABaseTrigger()
@@ -14,7 +14,7 @@ ABaseTrigger::ABaseTrigger()
 
 	SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("CollisionSphereComponent"));
 	SphereComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
-	SphereComponent->SetupAttachment(RootComponent);
+	RootComponent = SphereComponent;
 
 	SphereComponent->OnComponentBeginOverlap.AddUniqueDynamic(this, &ABaseTrigger::OnBeginOverlap);
 	SphereComponent->OnComponentEndOverlap.AddUniqueDynamic(this, &ABaseTrigger::OnEndOverlap);
