@@ -45,7 +45,10 @@ void AUE5TopDownARPGPlayerController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(SetDestinationClickAction, ETriggerEvent::Completed, this, &AUE5TopDownARPGPlayerController::OnSetDestinationReleased);
 		EnhancedInputComponent->BindAction(SetDestinationClickAction, ETriggerEvent::Canceled, this, &AUE5TopDownARPGPlayerController::OnSetDestinationReleased);
 
-		EnhancedInputComponent->BindAction(ActivateAbilityAction, ETriggerEvent::Started, this, &AUE5TopDownARPGPlayerController::OnActivateAbilityStarted);
+		//Abilities
+		EnhancedInputComponent->BindAction(ActivateAbility1Action, ETriggerEvent::Started, this, &AUE5TopDownARPGPlayerController::OnActivateAbility1Started);
+		EnhancedInputComponent->BindAction(ActivateAbility2Action, ETriggerEvent::Started, this, &AUE5TopDownARPGPlayerController::OnActivateAbility2Started);
+
 
 		// Setup touch input events
 		EnhancedInputComponent->BindAction(SetDestinationTouchAction, ETriggerEvent::Started, this, &AUE5TopDownARPGPlayerController::OnInputStarted);
@@ -119,10 +122,22 @@ void AUE5TopDownARPGPlayerController::OnTouchReleased()
 	OnSetDestinationReleased();
 }
 
-void AUE5TopDownARPGPlayerController::OnActivateAbilityStarted()
+void AUE5TopDownARPGPlayerController::OnActivateAbility1Started()
 {
-	UE_LOG(LogUE5TopDownARPG, Log, TEXT("OnActivateAbilityStarted"));
+	UE_LOG(LogUE5TopDownARPG, Log, TEXT("OnActivateAbility1Started"));
 
+	OnActivateAbilityStarted(1);
+}
+
+void AUE5TopDownARPGPlayerController::OnActivateAbility2Started()
+{
+	UE_LOG(LogUE5TopDownARPG, Log, TEXT("OnActivateAbility2Started"));
+
+	OnActivateAbilityStarted(2);
+}
+
+void AUE5TopDownARPGPlayerController::OnActivateAbilityStarted(int AbilityIndex)
+{
 	AUE5TopDownARPGCharacter* ARPGCharacter = Cast<AUE5TopDownARPGCharacter>(GetPawn());
 	if (IsValid(ARPGCharacter))
 	{
@@ -140,7 +155,7 @@ void AUE5TopDownARPGPlayerController::OnActivateAbilityStarted()
 		// If we hit a surface, cache the location
 		if (bHitSuccessful)
 		{
-			ARPGCharacter->ActivateAbility(Hit.Location);
+			ARPGCharacter->ActivateAbility(Hit.Location, AbilityIndex);
 		}
 	}
 }

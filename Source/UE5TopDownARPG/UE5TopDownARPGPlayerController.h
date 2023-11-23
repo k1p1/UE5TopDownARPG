@@ -40,7 +40,10 @@ public:
 	class UInputAction* SetDestinationTouchAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
-	class UInputAction* ActivateAbilityAction;
+	class UInputAction* ActivateAbility1Action;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* ActivateAbility2Action;
 
 protected:
 	/** True if the controlled character should navigate to the mouse cursor. */
@@ -57,9 +60,11 @@ protected:
 	void OnSetDestinationReleased();
 	void OnTouchTriggered();
 	void OnTouchReleased();
-	void OnActivateAbilityStarted();
+	void OnActivateAbility1Started();
+	void OnActivateAbility2Started();
 
 private:
+	void OnActivateAbilityStarted(int AbilityIndex);
 	FVector CachedDestination;
 
 	bool bIsTouch; // Is it a touch device

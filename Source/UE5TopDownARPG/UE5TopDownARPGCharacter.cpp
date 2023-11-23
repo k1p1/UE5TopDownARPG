@@ -54,9 +54,9 @@ void AUE5TopDownARPGCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	if (AbilityTemplate != nullptr)
+	for (int i = 0; i < AbilityTemplates.Num(); i++)
 	{
-		AbilityInstance = NewObject<UBaseAbility>(this, AbilityTemplate);
+		AbilityInstances.Add(NewObject<UBaseAbility>(this, AbilityTemplates[i]));
 	}
 }
 
@@ -76,11 +76,11 @@ void AUE5TopDownARPGCharacter::Tick(float DeltaSeconds)
 		}
 }
 
-bool AUE5TopDownARPGCharacter::ActivateAbility(FVector Location)
+bool AUE5TopDownARPGCharacter::ActivateAbility(FVector Location, int AbilityIndex)
 {
-	if (IsValid(AbilityInstance))
+	if (AbilityInstances.Num() >= AbilityIndex && IsValid(AbilityInstances[AbilityIndex - 1]))
 	{
-		return AbilityInstance->Activate(Location);
+		return AbilityInstances[AbilityIndex - 1]->Activate(Location);
 	}
 	return false;
 }

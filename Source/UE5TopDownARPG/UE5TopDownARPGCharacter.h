@@ -25,7 +25,7 @@ public:
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 
-	bool ActivateAbility(FVector Location);
+	bool ActivateAbility(FVector Location, int AbilityIndex);
 
 private:
 	/** Top down camera */
@@ -37,10 +37,10 @@ private:
 	class USpringArmComponent* CameraBoom;
 
 	UPROPERTY()
-	class UBaseAbility* AbilityInstance;
+	TArray<class UBaseAbility*> AbilityInstances;
 
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<class UBaseAbility> AbilityTemplate;
+	TArray<TSubclassOf<class UBaseAbility>> AbilityTemplates;
 
 	UPROPERTY(EditDefaultsOnly)
 	float Health = 100.0f;
