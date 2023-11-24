@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Components/SphereComponent.h"
 #include "BaseTrigger.generated.h"
 
 UCLASS()
@@ -30,7 +29,7 @@ protected:
 	void OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Other, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 	UPROPERTY(EditDefaultsOnly)
-	USphereComponent* SphereComponent;
+	class USphereComponent* SphereComponent;
 
 public:	
 	// Called every frame

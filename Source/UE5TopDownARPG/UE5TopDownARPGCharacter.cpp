@@ -63,7 +63,7 @@ void AUE5TopDownARPGCharacter::BeginPlay()
 void AUE5TopDownARPGCharacter::Tick(float DeltaSeconds)
 {
     Super::Tick(DeltaSeconds);
-
+		/*
 		FHitResult HitResult;
 		FVector TraceStartLocation = GetActorLocation();
 		FVector TraceEndLocation = GetActorLocation() + GetActorForwardVector() * 300.0f;
@@ -74,6 +74,7 @@ void AUE5TopDownARPGCharacter::Tick(float DeltaSeconds)
 		{
 			UE_LOG(LogUE5TopDownARPG, Log, TEXT("TraceHit %s %s"), *HitResult.GetActor()->GetName(), *HitResult.GetComponent()->GetName());
 		}
+		*/
 }
 
 bool AUE5TopDownARPGCharacter::ActivateAbility(FVector Location)
@@ -113,10 +114,9 @@ void AUE5TopDownARPGCharacter::Death()
 
 	FVector Location = GetActorLocation();
 	FRotator Rotation = GetActorRotation();
-	AActor* SpawnedActor = GetWorld()->SpawnActor(AfterDeathSpawnClass, &Location, &Rotation, SpawnParameters);
-	if (IsValid(SpawnedActor))
+	if (FMath::RandBool())
 	{
-
+		AActor* SpawnedActor = GetWorld()->SpawnActor(AfterDeathSpawnClass, &Location, &Rotation, SpawnParameters);
 	}
 
 	GetWorld()->GetTimerManager().ClearTimer(DeathHandle);

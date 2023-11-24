@@ -3,6 +3,7 @@
 
 #include "BaseTrigger.h"
 #include "Kismet/GameplayStatics.h"
+#include "Components/SphereComponent.h"
 #include "../UE5TopDownARPG.h"
 #include "../UE5TopDownARPGCharacter.h"
 
@@ -13,8 +14,9 @@ ABaseTrigger::ABaseTrigger()
 	PrimaryActorTick.bCanEverTick = true;
 
 	SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("CollisionSphereComponent"));
-	SphereComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
-	SphereComponent->SetupAttachment(RootComponent);
+	SphereComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+	SphereComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
+	RootComponent = SphereComponent;
 
 	SphereComponent->OnComponentBeginOverlap.AddUniqueDynamic(this, &ABaseTrigger::OnBeginOverlap);
 	SphereComponent->OnComponentEndOverlap.AddUniqueDynamic(this, &ABaseTrigger::OnEndOverlap);
