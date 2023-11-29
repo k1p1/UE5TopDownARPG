@@ -9,6 +9,7 @@
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Materials/Material.h"
+#include "Materials/MaterialInstanceDynamic.h"
 #include "Engine/World.h"
 #include "Abilities/BaseAbility.h"
 #include "UE5TopDownARPGGameMode.h"
@@ -75,6 +76,17 @@ void AUE5TopDownARPGCharacter::Tick(float DeltaSeconds)
 			UE_LOG(LogUE5TopDownARPG, Log, TEXT("TraceHit %s %s"), *HitResult.GetActor()->GetName(), *HitResult.GetComponent()->GetName());
 		}
 		*/
+}
+
+void AUE5TopDownARPGCharacter::PossessedBy(AController* NewController)
+{
+	UMaterialInstanceDynamic* MaterialInstance = UMaterialInstanceDynamic::Create(PossessedMaterial, this);
+	if (IsValid(MaterialInstance) == false)
+	{
+		UE_LOG(LogUE5TopDownARPG, Error, TEXT("AUE5TopDownARPGCharacter::PossessedBy IsValid(MaterialInstance) == false"));
+		return;
+	}
+	GetMesh()->SetMaterial(0, MaterialInstance);
 }
 
 bool AUE5TopDownARPGCharacter::ActivateAbility(FVector Location)

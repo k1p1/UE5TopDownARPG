@@ -20,6 +20,8 @@ public:
 	// Called every frame.
 	virtual void Tick(float DeltaSeconds) override;
 
+	virtual void PossessedBy(AController* NewController) override;
+
 	/** Returns TopDownCameraComponent subobject **/
 	FORCEINLINE class UCameraComponent* GetTopDownCameraComponent() const { return TopDownCameraComponent; }
 	/** Returns CameraBoom subobject **/
@@ -52,6 +54,9 @@ private:
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AActor> AfterDeathSpawnClass;
+
+	UPROPERTY(EditDefaultsOnly)
+	UMaterialInterface* PossessedMaterial;
 
 	UFUNCTION()
 	void TakeAnyDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigateBy, AActor* DamageCauser);
