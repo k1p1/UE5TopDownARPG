@@ -5,7 +5,7 @@
 
 void UUE5TopDownARPGAnimInstance::SetIsAttacking(bool InIsAttacking)
 {
-  IsAttacking = InIsAttacking;
+  PlaySlotAnimationAsDynamicMontage(AttackAnimation, FName(TEXT("UpperBody")));
 }
 
 void UUE5TopDownARPGAnimInstance::AnimNotify_AttackFinished()

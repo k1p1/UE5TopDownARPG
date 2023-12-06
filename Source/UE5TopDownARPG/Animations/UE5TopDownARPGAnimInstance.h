@@ -20,4 +20,6 @@ public:
 protected:
 	UPROPERTY(BlueprintReadOnly)
 	bool IsAttacking;
+	UPROPERTY(EditDefaultsOnly)
+	UAnimSequenceBase* AttackAnimation;
 };
