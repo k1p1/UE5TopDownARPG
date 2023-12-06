@@ -3,6 +3,9 @@
 
 #include "BoltAbility.h"
 #include "../Projectiles/Projectile.h"
+#include "../Animations/UE5TopDownARPGAnimInstance.h"
+
+#include "GameFramework/Character.h"
 
 bool UBoltAbility::Activate(FVector Location)
 {
@@ -11,10 +14,20 @@ bool UBoltAbility::Activate(FVector Location)
     return false;
   }
 
-	AActor* Owner = Cast<AActor>(GetOuter());
+	ACharacter* Owner = Cast<ACharacter>(GetOuter());
 	if (IsValid(Owner) == false)
 	{
 		return false;
+	}
+
+	USkeletalMeshComponent* SkeletalMesh = Owner->GetMesh();
+	if (IsValid(SkeletalMesh))
+	{
+		UUE5TopDownARPGAnimInstance* AnimInstance = Cast<UUE5TopDownARPGAnimInstance>(SkeletalMesh->GetAnimInstance());
+		if (IsValid(AnimInstance))
+		{
+			AnimInstance->SetIsAttacking(true);
+		}
 	}
 
 	FVector Direction = Location - Owner->GetActorLocation();
