@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Net/UnrealNetwork.h"
 #include "UE5TopDownARPGCharacter.generated.h"
 
 UCLASS(Blueprintable)
@@ -20,10 +21,13 @@ public:
 	// Called every frame.
 	virtual void Tick(float DeltaSeconds) override;
 
+	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
+
 	/** Returns TopDownCameraComponent subobject **/
 	FORCEINLINE class UCameraComponent* GetTopDownCameraComponent() const { return TopDownCameraComponent; }
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
+
 
 	bool ActivateAbility(FVector Location);
 
@@ -42,7 +46,7 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class UBaseAbility> AbilityTemplate;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, ReplicatedUsing = OnRep_SetHealth)
 	float Health = 100.0f;
 
 	UPROPERTY(EditDefaultsOnly)
@@ -55,6 +59,9 @@ private:
 
 	UFUNCTION()
 	void TakeAnyDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigateBy, AActor* DamageCauser);
+
+	UFUNCTION()
+	void OnRep_SetHealth(float OldHealth);
 
 	void Death();
 };

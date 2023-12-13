@@ -17,6 +17,10 @@ class UE5TOPDOWNARPG_API UBaseAbility : public UObject
 public:
 	virtual bool Activate(FVector Location);
 
+	virtual bool IsSupportedForNetworking() const override { return true; }
+	virtual bool CallRemoteFunction(UFunction* Function, void* Parms, struct FOutParmRec* OutParms, FFrame* Stack) override;
+	virtual int32 GetFunctionCallspace(UFunction* Function, FFrame* Stack) override;
+
 protected:
 	UPROPERTY(EditDefaultsOnly)
 	float Cooldown = 1.0f;
