@@ -13,6 +13,7 @@
 #include "Abilities/BaseAbility.h"
 #include "UE5TopDownARPGGameMode.h"
 #include "UE5TopDownARPG.h"
+#include "Net/UnrealNetwork.h"
 
 AUE5TopDownARPGCharacter::AUE5TopDownARPGCharacter()
 {
@@ -63,6 +64,7 @@ void AUE5TopDownARPGCharacter::BeginPlay()
 void AUE5TopDownARPGCharacter::Tick(float DeltaSeconds)
 {
     Super::Tick(DeltaSeconds);
+
 		/*
 		FHitResult HitResult;
 		FVector TraceStartLocation = GetActorLocation();
@@ -77,6 +79,13 @@ void AUE5TopDownARPGCharacter::Tick(float DeltaSeconds)
 		*/
 }
 
+void AUE5TopDownARPGCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AUE5TopDownARPGCharacter, Health);
+}
+
 bool AUE5TopDownARPGCharacter::ActivateAbility(FVector Location)
 {
 	if (IsValid(AbilityInstance))
@@ -89,6 +98,7 @@ bool AUE5TopDownARPGCharacter::ActivateAbility(FVector Location)
 void AUE5TopDownARPGCharacter::TakeAnyDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigateBy, AActor* DamageCauser)
 {
 	Health -= Damage;
+	OnRep_SetHealth(Health + Damage);
 	UE_LOG(LogUE5TopDownARPG, Log, TEXT("Health %f"), Health);
 	if (Health <= 0.0f)
 	{
@@ -97,6 +107,14 @@ void AUE5TopDownARPGCharacter::TakeAnyDamage(AActor* DamagedActor, float Damage,
 		{
 			GetWorld()->GetTimerManager().SetTimer(DeathHandle, this, &AUE5TopDownARPGCharacter::Death, DeathDelay);
 		}
+	}
+}
+
+void AUE5TopDownARPGCharacter::OnRep_SetHealth(float OldHealth)
+{
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Health %f"), Health));
 	}
 }
 

@@ -20,6 +20,8 @@ public:
 	// Called every frame.
 	virtual void Tick(float DeltaSeconds) override;
 
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 	/** Returns TopDownCameraComponent subobject **/
 	FORCEINLINE class UCameraComponent* GetTopDownCameraComponent() const { return TopDownCameraComponent; }
 	/** Returns CameraBoom subobject **/
@@ -42,7 +44,7 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class UBaseAbility> AbilityTemplate;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(ReplicatedUsing = OnRep_SetHealth, EditDefaultsOnly)
 	float Health = 100.0f;
 
 	UPROPERTY(EditDefaultsOnly)
@@ -55,6 +57,9 @@ private:
 
 	UFUNCTION()
 	void TakeAnyDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigateBy, AActor* DamageCauser);
+
+	UFUNCTION()
+	void OnRep_SetHealth(float OldHealth);
 
 	void Death();
 };
