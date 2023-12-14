@@ -20,4 +20,7 @@ public:
 private:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class AProjectile> ProjectileClass;
+
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_SpawnProjectile(FVector Location);
 };

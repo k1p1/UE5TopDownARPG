@@ -13,10 +13,17 @@ bool UBoltAbility::Activate(FVector Location)
     return false;
   }
 
+	ServerRPC_SpawnProjectile(Location);
+
+	return true;
+}
+
+void UBoltAbility::ServerRPC_SpawnProjectile_Implementation(FVector Location)
+{
 	ACharacter* Owner = Cast<ACharacter>(GetOuter());
 	if (IsValid(Owner) == false)
 	{
-		return false;
+		return;
 	}
 
 	USkeletalMeshComponent* MeshComponent = Owner->GetMesh();
@@ -41,8 +48,8 @@ bool UBoltAbility::Activate(FVector Location)
 	AActor* Projectile = GetWorld()->SpawnActor<AActor>(ProjectileClass, ProjectileSpawnLocation, Direction.Rotation(), SpawnParameters);
 	if (IsValid(Projectile) == false)
 	{
-		return false;
+		return;
 	}
 
-  return true;
+	return;
 }

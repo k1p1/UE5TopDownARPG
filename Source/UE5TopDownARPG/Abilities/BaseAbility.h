@@ -16,6 +16,9 @@ class UE5TOPDOWNARPG_API UBaseAbility : public UObject
 
 public:
 	virtual bool Activate(FVector Location);
+	virtual bool IsSupportedForNetworking() const override { return true; }
+	virtual bool CallRemoteFunction(UFunction* Function, void* Params, struct FOutParmRec* OutParms, FFrame* Stack) override;
+	virtual int32 GetFunctionCallspace(UFunction* Fuction, FFrame* Stack) override;
 
 protected:
 	UPROPERTY(EditDefaultsOnly)

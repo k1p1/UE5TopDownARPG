@@ -22,6 +22,31 @@ bool UBaseAbility::Activate(FVector Location)
   return true;
 }
 
+bool UBaseAbility::CallRemoteFunction(UFunction* Function, void* Params, FOutParmRec* OutParms, FFrame* Stack)
+{
+    AActor* SkillOuter = Cast<AActor>(GetOuter());
+    if (IsValid(SkillOuter) == false)
+    {
+      return false;
+    }
+
+    UNetDriver* NetDriver = SkillOuter->GetNetDriver();
+    if (IsValid(NetDriver) == false)
+    {
+      return false;
+    }
+
+    NetDriver->ProcessRemoteFunction(SkillOuter, Function, Params, OutParms, Stack, this);
+
+    return true;
+}
+
+int32 UBaseAbility::GetFunctionCallspace(UFunction* Function, FFrame* Stack)
+{
+  AActor* SkillOuter = Cast<AActor>(GetOuter());
+  return (SkillOuter ? SkillOuter->GetFunctionCallspace(Function, Stack) : FunctionCallspace::Local);
+}
+
 void UBaseAbility::OnCooldownEnded()
 {
   bIsInCooldown = false;
