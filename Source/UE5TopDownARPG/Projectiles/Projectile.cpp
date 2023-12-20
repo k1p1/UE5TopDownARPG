@@ -26,7 +26,11 @@ void AProjectile::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActo
 {
 	if (IsValid(Other))
 	{
-		Other->TakeDamage(Damage, FDamageEvent(UDamageType::StaticClass()), nullptr, this);
+		APawn* Pawn = Cast<APawn>(Other);
+		if (IsValid(Pawn))
+		{
+			Other->TakeDamage(Damage, FDamageEvent(UDamageType::StaticClass()), nullptr, this);
+		}
 	}
 
 	Destroy();
