@@ -27,6 +27,8 @@ public:
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 
+	FORCEINLINE class UBehaviorTree* GetBehaviorTree() const { return BehaviorTree; }
+
 	bool ActivateAbility(FVector Location);
 
 private:
@@ -37,6 +39,9 @@ private:
 	/** Camera boom positioning the camera above the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UBehaviorTree* BehaviorTree;
 
 	UPROPERTY()
 	class UBaseAbility* AbilityInstance;
