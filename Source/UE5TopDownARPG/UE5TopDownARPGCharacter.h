@@ -14,6 +14,8 @@ class AUE5TopDownARPGCharacter : public ACharacter
 public:
 	AUE5TopDownARPGCharacter();
 
+	virtual void PostInitializeComponents() override;
+
 	// Called every frame.
 	virtual void BeginPlay() override;
 
@@ -41,6 +43,12 @@ private:
 	class USpringArmComponent* CameraBoom;
 
 	UPROPERTY(EditDefaultsOnly)
+	class UWidgetComponent* HealthbarWidgetComponent;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UHealthbarWidget* HealthbarWidget;
+
+	UPROPERTY(EditDefaultsOnly)
 	class UBehaviorTree* BehaviorTree;
 
 	UPROPERTY()
@@ -51,6 +59,9 @@ private:
 
 	UPROPERTY(ReplicatedUsing = OnRep_SetHealth, EditDefaultsOnly)
 	float Health = 100.0f;
+
+	UPROPERTY(Replicated, EditDefaultsOnly)
+	float MaxHealth = 100.0f;
 
 	UPROPERTY(EditDefaultsOnly)
 	float DeathDelay = 1.0f;

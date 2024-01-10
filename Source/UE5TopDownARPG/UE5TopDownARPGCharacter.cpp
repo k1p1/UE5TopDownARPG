@@ -5,6 +5,7 @@
 #include "Camera/CameraComponent.h"
 #include "Components/DecalComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/WidgetComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -12,7 +13,9 @@
 #include "Engine/World.h"
 #include "Abilities/BaseAbility.h"
 #include "UE5TopDownARPGGameMode.h"
+#include "UE5TopDownARPGPlayerController.h"
 #include "UE5TopDownARPG.h"
+#include "UI/HealthBarWidget.h"
 #include "Net/UnrealNetwork.h"
 
 AUE5TopDownARPGCharacter::AUE5TopDownARPGCharacter()
@@ -44,11 +47,28 @@ AUE5TopDownARPGCharacter::AUE5TopDownARPGCharacter()
 	TopDownCameraComponent->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	TopDownCameraComponent->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
+	HealthbarWidgetComponent = CreateDefaultSubobject<UWidgetComponent>("HealthbarWidgetComponent");
+	HealthbarWidgetComponent->SetCastShadow(false);
+	HealthbarWidgetComponent->SetReceivesDecals(false);
+	HealthbarWidgetComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	HealthbarWidgetComponent->SetupAttachment(RootComponent);
+
 	// Activate ticking in order to update the cursor every frame.
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
 
 	OnTakeAnyDamage.AddDynamic(this, &AUE5TopDownARPGCharacter::TakeAnyDamage);
+}
+
+void AUE5TopDownARPGCharacter::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	if (IsValid(HealthbarWidgetComponent->GetWidgetClass()))
+	{
+		HealthbarWidgetComponent->InitWidget();
+		HealthbarWidget = Cast<UHealthbarWidget>(HealthbarWidgetComponent->GetUserWidgetObject());
+	}
 }
 
 void AUE5TopDownARPGCharacter::BeginPlay()
@@ -58,6 +78,12 @@ void AUE5TopDownARPGCharacter::BeginPlay()
 	if (AbilityTemplate != nullptr)
 	{
 		AbilityInstance = NewObject<UBaseAbility>(this, AbilityTemplate);
+	}
+
+	if (IsValid(HealthbarWidget))
+	{
+		float HealthPercent = Health / MaxHealth;
+		HealthbarWidget->SetPercent(HealthPercent);
 	}
 }
 
@@ -84,6 +110,7 @@ void AUE5TopDownARPGCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AUE5TopDownARPGCharacter, Health);
+	DOREPLIFETIME(AUE5TopDownARPGCharacter, MaxHealth);
 }
 
 bool AUE5TopDownARPGCharacter::ActivateAbility(FVector Location)
@@ -100,6 +127,11 @@ void AUE5TopDownARPGCharacter::TakeAnyDamage(AActor* DamagedActor, float Damage,
 	Health -= Damage;
 	OnRep_SetHealth(Health + Damage);
 	UE_LOG(LogUE5TopDownARPG, Log, TEXT("Health %f"), Health);
+	if (IsValid(HealthbarWidget))
+	{
+		float HealthPercent = Health / MaxHealth;
+		HealthbarWidget->SetPercent(HealthPercent);
+	}
 	if (Health <= 0.0f)
 	{
 		FTimerManager& TimerManager = GetWorld()->GetTimerManager();
@@ -138,5 +170,11 @@ void AUE5TopDownARPGCharacter::Death()
 	}
 
 	GetWorld()->GetTimerManager().ClearTimer(DeathHandle);
+	AUE5TopDownARPGPlayerController* PlayerController = Cast<AUE5TopDownARPGPlayerController>(GetController());
+	if (IsValid(PlayerController))
+	{
+		PlayerController->OnPlayerDied();
+	}
+	
 	Destroy();
 }

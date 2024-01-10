@@ -6,6 +6,7 @@
 #include "NiagaraSystem.h"
 #include "NiagaraFunctionLibrary.h"
 #include "UE5TopDownARPGCharacter.h"
+#include "UI/UE5TopDownARPGHUD.h"
 #include "Engine/World.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
@@ -142,5 +143,14 @@ void AUE5TopDownARPGPlayerController::OnActivateAbilityStarted()
 		{
 			ARPGCharacter->ActivateAbility(Hit.Location);
 		}
+	}
+}
+
+void AUE5TopDownARPGPlayerController::OnPlayerDied()
+{
+	AUE5TopDownARPGHUD* HUD = Cast<AUE5TopDownARPGHUD>(GetHUD());
+	if (IsValid(HUD))
+	{
+		HUD->ShowEndGameScreen();
 	}
 }
