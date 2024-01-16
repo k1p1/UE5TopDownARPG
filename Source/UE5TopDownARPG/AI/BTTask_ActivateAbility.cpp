@@ -14,8 +14,8 @@ EBTNodeResult::Type UBTTask_ActivateAbility::ExecuteTask(UBehaviorTreeComponent&
     return EBTNodeResult::Failed;
   }
 
-  AUE5TopDownARPGCharacter* PossesedCharacter = Cast<AUE5TopDownARPGCharacter>(AIController->GetPawn());
-  if (IsValid(PossesedCharacter) == false)
+  AUE5TopDownARPGCharacter* PossessedCharacter = Cast<AUE5TopDownARPGCharacter>(AIController->GetPawn());
+  if (IsValid(PossessedCharacter) == false)
   {
     return EBTNodeResult::Failed;
   }
@@ -32,7 +32,7 @@ EBTNodeResult::Type UBTTask_ActivateAbility::ExecuteTask(UBehaviorTreeComponent&
     return EBTNodeResult::Failed;
   }
 
-  if (PossesedCharacter->ActivateAbility(Target->GetActorLocation()) == false)
+  if (PossessedCharacter->ActivateAbility(Target->GetActorLocation()) == false)
   {
     return EBTNodeResult::Failed;
   }

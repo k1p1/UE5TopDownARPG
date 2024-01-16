@@ -17,8 +17,8 @@ EBTNodeResult::Type UBTTask_FindPlayer::ExecuteTask(UBehaviorTreeComponent& Owne
     return EBTNodeResult::Failed;
   }
 
-  APawn* PossesedPawn = AIController->GetPawn();
-  if (IsValid(PossesedPawn) == false)
+  APawn* PossessedPawn = AIController->GetPawn();
+  if (IsValid(PossessedPawn) == false)
   {
     return EBTNodeResult::Failed;
   }
@@ -35,7 +35,7 @@ EBTNodeResult::Type UBTTask_FindPlayer::ExecuteTask(UBehaviorTreeComponent& Owne
   for (AActor* Actor : FoundActors)
   {
     AUE5TopDownARPGCharacter* UE5TopDownARPGCharacter = Cast<AUE5TopDownARPGCharacter>(Actor);
-    if (IsValid(UE5TopDownARPGCharacter) == false)
+    if (IsValid(UE5TopDownARPGCharacter) == false) // GetAllActorsOfClass may return Actors pending destruction!
     {
       continue;
     }
@@ -46,7 +46,7 @@ EBTNodeResult::Type UBTTask_FindPlayer::ExecuteTask(UBehaviorTreeComponent& Owne
       continue;
     }
 
-    UNavigationPath* Path = NavSys->FindPathToLocationSynchronously(GetWorld(), PossesedPawn->GetActorLocation(), Actor->GetActorLocation());
+    UNavigationPath* Path = NavSys->FindPathToLocationSynchronously(GetWorld(), PossessedPawn->GetActorLocation(), UE5TopDownARPGCharacter->GetActorLocation());
     if (Path->IsValid() && Path->IsPartial() == false)
     {
       UBlackboardComponent* BlackboardComponent = OwnerComp.GetBlackboardComponent();
@@ -55,7 +55,7 @@ EBTNodeResult::Type UBTTask_FindPlayer::ExecuteTask(UBehaviorTreeComponent& Owne
         return EBTNodeResult::Failed;
       }
 
-      BlackboardComponent->SetValueAsObject(FName("Target"), Actor);
+      BlackboardComponent->SetValueAsObject(FName("Target"), UE5TopDownARPGCharacter);
       return EBTNodeResult::Succeeded;
     }
   }
