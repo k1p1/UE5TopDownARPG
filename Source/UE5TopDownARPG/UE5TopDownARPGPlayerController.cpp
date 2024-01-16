@@ -6,6 +6,7 @@
 #include "NiagaraSystem.h"
 #include "NiagaraFunctionLibrary.h"
 #include "UE5TopDownARPGCharacter.h"
+#include "UE5TopDownARPGHUD.h"
 #include "Engine/World.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
@@ -17,6 +18,15 @@ AUE5TopDownARPGPlayerController::AUE5TopDownARPGPlayerController()
 	DefaultMouseCursor = EMouseCursor::Default;
 	CachedDestination = FVector::ZeroVector;
 	FollowTime = 0.f;
+}
+
+void AUE5TopDownARPGPlayerController::OnPlayerDied()
+{
+	AUE5TopDownARPGHUD* HUD = Cast<AUE5TopDownARPGHUD>(GetHUD());
+	if (IsValid(HUD))
+	{
+		HUD->ShowEndGameScreen();
+	}
 }
 
 void AUE5TopDownARPGPlayerController::BeginPlay()

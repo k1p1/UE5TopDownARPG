@@ -5,6 +5,7 @@
 #include "Camera/CameraComponent.h"
 #include "Components/DecalComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/WidgetComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -12,7 +13,9 @@
 #include "Engine/World.h"
 #include "Abilities/BaseAbility.h"
 #include "UE5TopDownARPGGameMode.h"
+#include "UE5TopDownARPGPlayerController.h"
 #include "UE5TopDownARPG.h"
+#include "UI/HealthbarWidget.h"
 #include "Net/UnrealNetwork.h"
 
 AUE5TopDownARPGCharacter::AUE5TopDownARPGCharacter()
@@ -39,6 +42,12 @@ AUE5TopDownARPGCharacter::AUE5TopDownARPGCharacter()
 	CameraBoom->SetRelativeRotation(FRotator(-60.f, 0.f, 0.f));
 	CameraBoom->bDoCollisionTest = false; // Don't want to pull camera in when it collides with level
 
+	WidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
+	WidgetComponent->SetCastShadow(false);
+	WidgetComponent->SetReceivesDecals(false);
+	WidgetComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	WidgetComponent->SetupAttachment(RootComponent);
+
 	// Create a camera...
 	TopDownCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("TopDownCamera"));
 	TopDownCameraComponent->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
@@ -51,6 +60,17 @@ AUE5TopDownARPGCharacter::AUE5TopDownARPGCharacter()
 	OnTakeAnyDamage.AddDynamic(this, &AUE5TopDownARPGCharacter::TakeAnyDamage);
 }
 
+void AUE5TopDownARPGCharacter::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	if (IsValid(WidgetComponent->GetWidgetClass()))
+	{
+		WidgetComponent->InitWidget();
+		HealthbarWidget = Cast<UHealthbarWidget>(WidgetComponent->GetUserWidgetObject());
+	}
+}
+
 void AUE5TopDownARPGCharacter::BeginPlay()
 {
 	Super::BeginPlay();
@@ -58,6 +78,11 @@ void AUE5TopDownARPGCharacter::BeginPlay()
 	if (AbilityTemplate != nullptr)
 	{
 		AbilityInstance = NewObject<UBaseAbility>(this, AbilityTemplate);
+	}
+	if (IsValid(HealthbarWidget))
+	{
+		float HealthPercent = Health / MaxHealth;
+		HealthbarWidget->SetPercent(HealthPercent);
 	}
 }
 
@@ -84,6 +109,7 @@ void AUE5TopDownARPGCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AUE5TopDownARPGCharacter, Health);
+	DOREPLIFETIME(AUE5TopDownARPGCharacter, MaxHealth);
 }
 
 bool AUE5TopDownARPGCharacter::ActivateAbility(FVector Location)
@@ -100,6 +126,11 @@ void AUE5TopDownARPGCharacter::TakeAnyDamage(AActor* DamagedActor, float Damage,
 	Health -= Damage;
 	OnRep_SetHealth(Health + Damage);
 	UE_LOG(LogUE5TopDownARPG, Log, TEXT("Health %f"), Health);
+	if (IsValid(HealthbarWidget))
+	{
+		float HealthPercent = Health / MaxHealth;
+		HealthbarWidget->SetPercent(HealthPercent);
+	}
 	if (Health <= 0.0f)
 	{
 		FTimerManager& TimerManager = GetWorld()->GetTimerManager();
@@ -138,5 +169,10 @@ void AUE5TopDownARPGCharacter::Death()
 	}
 
 	GetWorld()->GetTimerManager().ClearTimer(DeathHandle);
+	AUE5TopDownARPGPlayerController* PlayerController = Cast<AUE5TopDownARPGPlayerController>(GetController());
+	if (IsValid(PlayerController))
+	{
+		PlayerController->OnPlayerDied();
+	}
 	Destroy();
 }

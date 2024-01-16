@@ -19,6 +19,8 @@ class AUE5TopDownARPGPlayerController : public APlayerController
 public:
 	AUE5TopDownARPGPlayerController();
 
+	void OnPlayerDied();
+
 	/** Time Threshold to know if it was a short press */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	float ShortPressThreshold;
