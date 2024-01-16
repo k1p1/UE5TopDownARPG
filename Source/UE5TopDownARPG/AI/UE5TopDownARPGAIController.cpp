@@ -17,10 +17,10 @@ void AUE5TopDownARPGAIController::OnPossess(APawn* InPawn)
 {
   Super::OnPossess(InPawn);
 
-  AUE5TopDownARPGCharacter* PossesedCharacter = Cast<AUE5TopDownARPGCharacter>(InPawn);
-  if (IsValid(PossesedCharacter))
+  AUE5TopDownARPGCharacter* PossessedCharacter = Cast<AUE5TopDownARPGCharacter>(InPawn);
+  if (IsValid(PossessedCharacter))
   {
-    UBehaviorTree* Tree = PossesedCharacter->GetBehaviorTree();
+    UBehaviorTree* Tree = PossessedCharacter->GetBehaviorTree();
     if (IsValid(Tree))
     {
       BlackboardComponent->InitializeBlackboard(*Tree->GetBlackboardAsset());
