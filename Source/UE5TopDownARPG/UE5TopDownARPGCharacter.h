@@ -31,6 +31,8 @@ public:
 
 	FORCEINLINE class UBehaviorTree* GetBehaviorTree() const { return BehaviorTree; }
 
+	FORCEINLINE float GetHealth()const { return Health; }
+
 	bool ActivateAbility(FVector Location);
 
 private:
